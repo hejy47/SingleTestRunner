@@ -97,6 +97,21 @@ public class SingleTestRunner {
                 if (name.equals("org.testng.annotations.Test")) return Framework.TESTNG;
             }
 
+            // Check for JUnit 3 (TestCase inheritance)
+            try {
+                Class<?> testCaseClass = Class.forName("junit.framework.TestCase");
+                if (testCaseClass.isAssignableFrom(testClass)) {
+                    return Framework.JUNIT4;
+                }
+            } catch (ClassNotFoundException e) {
+                // Ignore
+            }
+
+            // Fallback: method name starts with "test" -> JUnit 4 (which supports JUnit 3 style)
+            if (methodName.startsWith("test")) {
+                return Framework.JUNIT4;
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
